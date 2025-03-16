@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIS - Auckland Institute of Studies</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.6;
+      font-size: 18px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.light-mode {
+      background: #ffffff;
+      color: #333;
+    }
+
+    body.dark-mode {
+      background: #2c3e50;
+      color: #ecf0f1;
+    }
+
+    /* Login Section */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100%;
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #8e44ad 100%);
+      position: relative;
+      z-index: 1;
+      display: block;
+      overflow: hidden;
+    }
+
+    .login-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/wave.png');
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      position: relative;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      border: 2px solid #e74c3c;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .logo {
+      width: 200px;
+      margin-bottom: 30px;
+      transition: filter 0.3s ease;
+    }
+
+    .logo:hover {
+      filter: brightness(1.2);
+    }
+
+    .input-group {
+      margin: 15px 0;
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 15px;
+      background: #f0f0f0;
+      border: 1px solid #333;
+      border-radius: 10px;
+      font-size: 16px;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-field::placeholder {
+      color: #666;
+    }
+
+    .input-field:focus {
+      border-color: #e74c3c;
+      outline: none;
+      box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #e74c3c;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .login-btn:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    .forgot-password {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .forgot-password a {
+      color: #e74c3c;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-password a:hover {
+      color: #e57373;
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #e57373;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Main Layout */
+    .main-wrapper {
+      display: none;
+      flex: 1;
+      flex-direction: row;
+    }
+
+    .sidebar {
+      width: 250px;
+      padding: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar.light-mode {
+      background: #ffffff;
+      border-right: 1px solid #333;
+    }
+
+    .sidebar.dark-mode {
+      background: #2c3e50;
+    }
+
+    .sidebar .logo {
+      width: 150px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar ul li i {
+      margin-right: 10px;
+      color: #e74c3c;
+      font-size: 18px;
+    }
+
+    .sidebar ul li:hover {
+      background: #e74c3c;
+      color: #ffffff;
+    }
+
+    .sidebar ul li:hover i {
+      color: #ffffff;
+    }
+
+    .sidebar ul li.active {
+      background: #e74c3c;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .sidebar ul li.active i {
+      color: #ffffff;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      padding: 80px 20px 20px;
+      transition: background 0.3s ease;
+    }
+
+    .content-wrapper.light-mode {
+      background: #f5f5f5;
+    }
+
+    .content-wrapper.dark-mode {
+      background: #2c3e50;
+    }
+
+    /* Top Navbar */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 250px;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: background 0.3s ease;
+    }
+
+    .top-nav.light-mode {
+      background: #ffffff;
+    }
+
+    .top-nav.dark-mode {
+      background: #2c3e50;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .top-nav .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* Larger gap between elements */
+    }
+
+    .top-nav .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f0f0f0;
+      padding: 10px 15px; /* Larger search bar */
+      border-radius: 25px;
+      width: 200px; /* Fixed width for larger search bar */
+      transition: background 0.3s ease;
+    }
+
+    .top-nav.dark-mode .search-bar {
+      background: #34495e;
+    }
+
+    .top-nav .search-bar i {
+      color: #666;
+      margin-right: 10px;
+    }
+
+    .top-nav .search-bar input {
+      border: none;
+      background: none;
+      outline: none;
+      font-size: 14px;
+      color: #333;
+      width: 100%;
+    }
+
+    .top-nav.dark-mode .search-bar input {
+      color: #ecf0f1;
+    }
+
+    .top-nav .nav-actions i {
+      color: #666;
+      font-size: 18px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .top-nav.dark-mode .nav-actions i {
+      color: #ecf0f1;
+    }
+
+    .top-nav .nav-actions i:hover {
+      color: #e74c3c;
+    }
+
+    .top-nav .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .top-nav .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #e74c3c;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .top-nav .profile-pic:hover {
+      transform: scale(1.1);
+      border-color: #c0392b;
+    }
+
+    .top-nav .profile .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #ffffff;
+      min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      z-index: 1;
+      transition: background 0.3s ease;
+    }
+
+    .top-nav.dark-mode .dropdown-content {
+      background: #2c3e50;
+    }
+
+    .top-nav .profile:hover .dropdown-content {
+      display: block;
+    }
+
+    .top-nav .dropdown-content a {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    .top-nav.dark-mode .dropdown-content a {
+      color: #ecf0f1;
+    }
+
+    .top-nav .dropdown-content a i {
+      margin-right: 10px;
+      color: #e74c3c;
+    }
+
+    .top-nav .dropdown-content a:hover {
+      background: #e74c3c;
+      color: #ffffff;
+    }
+
+    .top-nav .dropdown-content a:hover i {
+      color: #ffffff;
+    }
+
+    /* New Courses */
+    .new-courses {
+      margin-bottom: 30px;
+    }
+
+    .new-courses h2 {
+      font-size: 20px;
+      color: #000000;
+      margin-bottom: 15px;
+    }
+
+    .new-courses.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    .course-container {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .course-card {
+      flex: 0 0 280px;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .course-card.dark-mode {
+      background: #34495e;
+    }
+
+    .course-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .course-card .icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: #f0f0f0;
+    }
+
+    .course-card.dark-mode .icon {
+      background: #2c3e50;
+    }
+
+    .course-card h3 {
+      font-size: 16px;
+      color: #000000;
+      margin-bottom: 8px;
+    }
+
+    .course-card.dark-mode h3 {
+      color: #ecf0f1;
+    }
+
+    .course-card p {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .course-card.dark-mode p {
+      color: #b0bec5;
+    }
+
+    .course-card .btn {
+      display: inline-block;
+      padding: 8px 12px;
+      background: #e74c3c;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .course-card .btn:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+
+    /* Upcoming Events */
+    .upcoming-events {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .upcoming-events h2 {
+      font-size: 18px;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+
+    .upcoming-events.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    .event-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .event-card {
+      flex: 0 0 100%;
+      max-width: 280px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .event-card.dark-mode {
+      background: #34495e;
+    }
+
+    .event-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .event-card h3 {
+      font-size: 14px;
+      color: #000000;
+      margin-bottom: 5px;
+    }
+
+    .event-card.dark-mode h3 {
+      color: #ecf0f1;
+    }
+
+    .event-card p {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 0;
+    }
+
+    .event-card.dark-mode p {
+      color: #b0bec5;
+    }
+
+    /* Calendar */
+    .calendar-section {
+      flex: 1;
+      min-width: 280px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
+    }
+
+    .calendar-section.dark-mode {
+      background: #34495e;
+    }
+
+    .calendar-section h2 {
+      font-size: 18px;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+
+    .calendar-section.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .calendar-header span {
+      font-size: 14px;
+      color: #000000;
+    }
+
+    .calendar-header.dark-mode span {
+      color: #ecf0f1;
+    }
+
+    .calendar-header .nav-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .calendar-header button {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.3s ease;
+    }
+
+    .calendar-header button:hover {
+      background: #c0392b;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .calendar-day {
+      padding: 6px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      font-size: 10px;
+      transition: background 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .calendar-day.dark-mode {
+      background: #2c3e50;
+    }
+
+    .calendar-day:hover {
+      background: #e0e0e0;
+      transform: scale(1.05);
+    }
+
+    .calendar-day.dark-mode:hover {
+      background: #e74c3c;
+    }
+
+    .calendar-day.today {
+      background: #e74c3c;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .calendar-day.college-day {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .calendar-day.header {
+      font-weight: bold;
+      background: #ddd;
+      color: #333;
+      cursor: default;
+    }
+
+    .calendar-day.header.dark-mode {
+      background: #2c3e50;
+      color: #ecf0f1;
+    }
+
+    .calendar-day.header:hover {
+      background: #ddd;
+      transform: none;
+    }
+
+    .calendar-day.header.dark-mode:hover {
+      background: #2c3e50;
+    }
+
+    /* Attendance Card */
+    .attendance-section {
+      flex: 0 0 200px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .attendance-section.dark-mode {
+      background: #34495e;
+    }
+
+    .attendance-section h2 {
+      font-size: 18px;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+
+    .attendance-section.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    .attendance-section .percentage {
+      font-size: 20px;
+      color: #27ae60;
+      margin-bottom: 8px;
+    }
+
+    .attendance-section.dark-mode .percentage {
+      color: #2ecc71;
+    }
+
+    .attendance-section .btn {
+      display: inline-block;
+      padding: 6px 10px;
+      background: #e74c3c;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .attendance-section .btn:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
+    /* Courses Page */
+    .courses-section {
+      padding: 20px 0;
+    }
+
+    .courses-section h2 {
+      font-size: 20px;
+      color: #000000;
+      margin-bottom: 15px;
+    }
+
+    .courses-section.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    /* Enhanced Courses List Table Design */
+    .course-list {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
+      overflow: hidden;
+    }
+
+    .course-list.dark-mode {
+      background: #34495e;
+    }
+
+    .course-list table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .course-list.dark-mode table {
+      background: #34495e;
+    }
+
+    .course-list th, .course-list td {
+      padding: 15px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.3s ease;
+    }
+
+    .course-list.dark-mode th, .course-list.dark-mode td {
+      border-bottom: 1px solid #2c3e50;
+    }
+
+    .course-list th {
+      font-weight: 600;
+      color: #666;
+      background: #f9f9f9;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .course-list.dark-mode th {
+      color: #ecf0f1;
+      background: #2c3e50;
+    }
+
+    .course-list tr:hover {
+      background: #f0f0f0;
+    }
+
+    .course-list.dark-mode tr:hover {
+      background: #3e5a78;
+    }
+
+    .course-list td {
+      color: #333;
+    }
+
+    .course-list.dark-mode td {
+      color: #ecf0f1;
+    }
+
+    .course-list .duration {
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .course-list.dark-mode .duration {
+      color: #b0bec5;
+    }
+
+    .course-list .action-btn {
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .course-list .action-btn i {
+      font-size: 14px;
+    }
+
+    .course-list .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+
+    .course-list .view-all {
+      display: block;
+      text-align: right;
+      margin-top: 15px;
+      color: #e74c3c;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .course-list .view-all:hover {
+      color: #c0392b;
+      text-decoration: underline;
+    }
+
+    /* Progress Bar Styles */
+    .progress-bar-container {
+      width: 100%;
+      background: #f0f0f0;
+      border-radius: 5px;
+      height: 8px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-bar-container.dark-mode {
+      background: #2c3e50;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      border-radius: 5px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* Enhanced Course Card with Progress Bar */
+    .course-card .progress-bar-container {
+      margin: 10px 0;
+    }
+
+    /* Grades Section */
+    .grades-section {
+      padding: 20px 0;
+    }
+
+    .grades-section h2 {
+      font-size: 20px;
+      color: #000000;
+      margin-bottom: 15px;
+    }
+
+    .grades-section.dark-mode h2 {
+      color: #ecf0f1;
+    }
+
+    .grades-table {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
+      overflow: hidden;
+    }
+
+    .grades-table.dark-mode {
+      background: #34495e;
+    }
+
+    .grades-table table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .grades-table.dark-mode table {
+      background: #34495e;
+    }
+
+    .grades-table th, .grades-table td {
+      padding: 15px;
+      text-align: center;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.3s ease;
+    }
+
+    .grades-table.dark-mode th, .grades-table.dark-mode td {
+      border-bottom: 1px solid #2c3e50;
+    }
+
+    .grades-table th {
+      font-weight: 600;
+      color: #666;
+      background: #f9f9f9;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .grades-table.dark-mode th {
+      color: #ecf0f1;
+      background: #2c3e50;
+    }
+
+    .grades-table tr:hover {
+      background: #f0f0f0;
+    }
+
+    .grades-table.dark-mode tr:hover {
+      background: #3e5a78;
+    }
+
+    .grades-table td {
+      color: #333;
+    }
+
+    .grades-table.dark-mode td {
+      color: #ecf0f1;
+    }
+
+    .grades-table .pending {
+      color: #e74c3c;
+      font-style: italic;
+    }
+
+    .grades-table.dark-mode .pending {
+      color: #e57373;
+    }
+
+    /* Media Queries for Phone View (max-width: 768px) */
+    @media (max-width: 768px) {
+      .main-wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .sidebar .logo {
+        width: 120px;
+      }
+
+      .sidebar ul li {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      .sidebar ul li i {
+        margin-right: 8px;
+        font-size: 16px; /* Reduced icon size for phone */
+      }
+
+      .content-wrapper {
+        padding: 70px 15px 15px;
+      }
+
+      .top-nav {
+        left: 0;
+        padding: 10px 15px;
+      }
+
+      .top-nav h1 {
+        font-size: 18px;
+      }
+
+      .top-nav .search-bar {
+        padding: 6px 10px;
+      }
+
+      .top-nav .search-bar i {
+        font-size: 14px; /* Reduced icon size for phone */
+      }
+
+      .top-nav .search-bar input {
+        font-size: 12px;
+      }
+
+      .top-nav .nav-actions i {
+        font-size: 16px; /* Reduced icon size for phone */
+      }
+
+      .top-nav .profile-pic {
+        width: 30px;
+        height: 30px;
+      }
+
+      .top-nav .profile span {
+        font-size: 12px;
+      }
+
+      .top-nav .dropdown-content {
+        min-width: 150px;
+      }
+
+      .top-nav .dropdown-content a {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .top-nav .dropdown-content a i {
+        font-size: 14px; /* Reduced icon size for phone */
+      }
+
+      .new-courses h2, .upcoming-events h2, .courses-section h2, .grades-section h2 {
+        font-size: 16px;
+      }
+
+      .course-container, .event-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .course-card, .event-card {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 12px;
+      }
+
+      .course-card .icon, .event-card .icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+
+      .course-card h3, .event-card h3 {
+        font-size: 14px;
+      }
+
+      .course-card p, .event-card p {
+        font-size: 10px;
+      }
+
+      .course-card .btn, .attendance-section .btn, .course-list .action-btn {
+        padding: 6px 10px;
+        font-size: 10px;
+      }
+
+      .main-content {
+        flex-direction: column;
+      }
+
+      .upcoming-events, .calendar-section, .attendance-section {
+        max-width: 100%;
+        margin-bottom: 15px;
+      }
+
+      .event-card h3 {
+        font-size: 12px;
+      }
+
+      .event-card p {
+        font-size: 10px;
+      }
+
+      .calendar-header span {
+        font-size: 12px;
+      }
+
+      .calendar-header button {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+
+      .calendar-day {
+        padding: 4px;
+        font-size: 8px;
+      }
+
+      .attendance-section .percentage {
+        font-size: 16px;
+      }
+
+      .course-list th, .course-list td {
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      .course-list .duration {
+        font-size: 10px;
+      }
+
+      .course-list .action-btn {
+        padding: 6px 10px;
+        font-size: 10px;
+      }
+
+      .course-list .action-btn i {
+        font-size: 12px;
+      }
+
+      .progress-bar-container {
+        height: 6px;
+      }
+
+      .grades-table th, .grades-table td {
+        padding: 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <!-- Login Section -->
+  <div class="login-wrapper" id="login-section">
+    <div class="login-container">
+      <div class="login-card">
+        <img src="aislogo.png" alt="AIS Logo" class="logo">
+        <div class="input-group">
+          <input type="text" class="input-field" id="username" placeholder="Enter your AIS ID">
+        </div>
+        <div class="input-group">
+          <input type="password" class="input-field" id="password" placeholder="Password">
+        </div>
+        <button class="login-btn" onclick="handleLogin()">Log In</button>
+        <div class="forgot-password">
+          <a href="#">Forgot Password?</a>
+        </div>
+        <div class="error-message" id="error-message">Invalid ID or Password</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Section -->
+  <div class="main-wrapper" id="main-wrapper">
+    <div class="sidebar light-mode">
+      <img src="aislogo.png" alt="AIS Logo" class="logo">
+      <ul>
+        <li class="active" onclick="navigate('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+        <li onclick="navigate('courses')"><i class="fas fa-book"></i> Courses</li>
+        <li onclick="navigate('chats')"><i class="fas fa-comments"></i> Chats</li>
+        <li onclick="navigate('grades')"><i class="fas fa-star"></i> Grades</li>
+        <li onclick="navigate('Calendar')"><i class="fas fa-calendar"></i> Calendar</li>
+      </ul>
+    </div>
+    <div class="content-wrapper light-mode">
+      <div class="top-nav light-mode">
+        <div class="nav-title" id="nav-title"></div> <!-- Dynamic title placeholder -->
+        <div class="nav-actions">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search">
+          </div>
+          <div style="flex-grow: 1;"></div> <!-- Empty gap -->
+          <i class="fas fa-bell"></i>
+          <i class="fas fa-sun" id="theme-toggle"></i>
+          <div class="profile">
+            <img src="profile.jpg" alt="Profile" class="profile-pic">
+            <div class="dropdown-content">
+              <a href="#"><i class="fas fa-user"></i> Profile</a>
+              <a href="#"><i class="fas fa-cog"></i> Settings</a>
+              <a href="#"><i class="fas fa-graduation-cap"></i> Grades</a>
+              <a href="#"><i class="fas fa-envelope"></i> Messages</a>
+              <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Log out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="new-courses" id="dashboard-content">
+        <div class="course-container">
+          <div class="course-card light-mode">
+            <div class="icon" style="background: #ffecd1;"><i class="fas fa-laptop"></i></div>
+            <h3>COMP510: Fundamentals of Information Systems and Technology</h3>
+            <p>12 lessons</p>
+            <div class="progress-bar-container light-mode">
+              <div class="progress-bar" style="width: 75%;"></div>
+            </div>
+            <button class="btn" onclick="enrollCourse('COMP510')">Enroll</button>
+          </div>
+          <div class="course-card light-mode">
+            <div class="icon" style="background: #e2dbff;"><i class="fas fa-database"></i></div>
+            <h3>COMP514: Fundamentals of Computer Databases</h3>
+            <p>15 lessons</p>
+            <div class="progress-bar-container light-mode">
+              <div class="progress-bar" style="width: 50%;"></div>
+            </div>
+            <button class="btn" onclick="continueCourse('COMP514')">Continue</button>
+          </div>
+          <div class="course-card light-mode">
+            <div class="icon" style="background: #d1eaff;"><i class="fas fa-tools"></i></div>
+            <h3>COMP517: Hardware and Software Service Provisioning</h3>
+            <p>10 lessons</p>
+            <div class="progress-bar-container light-mode">
+              <div class="progress-bar" style="width: 20%;"></div>
+            </div>
+            <button class="btn" onclick="enrollCourse('COMP517')">Enroll</button>
+          </div>
+          <div class="course-card light-mode">
+            <div class="icon" style="background: #f5d6d6;"><i class="fas fa-cogs"></i></div>
+            <h3>COMP518: Information Systems Maintenance and Service Management</h3>
+            <p>12 lessons</p>
+            <div class="progress-bar-container light-mode">
+              <div class="progress-bar" style="width: 90%;"></div>
+            </div>
+            <button class="btn" onclick="continueCourse('COMP518')">Continue</button>
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="upcoming-events">
+            <h2>Upcoming Events</h2>
+            <div class="event-container">
+              <div class="event-card light-mode">
+                <h3>Nepali New Year 2082BS</h3>
+                <p>April 14, 2025</p>
+              </div>
+              <div class="event-card light-mode">
+                <h3>Sports Week</h3>
+                <p>May 5, 2025</p>
+              </div>
+              <div class="event-card light-mode">
+                <h3>Food Festival</h3>
+                <p>May 20, 2025</p>
+              </div>
+              <div class="event-card light-mode">
+                <h3>AI & Data Science Crash Course</h3>
+                <p>June 10, 2025</p>
+              </div>
+            </div>
+          </div>
+          <div class="calendar-section">
+            <h2>Calendar</h2>
+            <div class="calendar-header">
+              <span id="calendar-month">March 2025</span>
+              <div class="nav-buttons">
+                <button onclick="prevMonth()">Prev</button>
+                <button onclick="nextMonth()">Next</button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+          <div class="attendance-section">
+            <h2>Attendance</h2>
+            <div class="percentage">85%</div>
+            <button class="btn" onclick="applyForLeave()">Apply for Leave</button>
+          </div>
+        </div>
+      </div>
+      <div class="courses-section" id="courses-content" style="display: none;">
+        <h2>Courses</h2>
+        <div class="course-list light-mode">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Trimester</th>
+                <th>Progress</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>COMP510: Fundamentals of Information Systems and Technology (Stream B)</td>
+                <td>Trimester 1</td>
+                <td>
+                  <div class="progress-bar-container light-mode">
+                    <div class="progress-bar" style="width: 75%;"></div>
+                  </div>
+                </td>
+                <td><button class="action-btn" onclick="enrollCourse('COMP510')"><i class="fas fa-plus"></i> Enroll</button></td>
+              </tr>
+              <tr>
+                <td class="duration" colspan="4">Feb-May</td>
+              </tr>
+              <tr>
+                <td>COMP514: Fundamentals of Computer Databases (Stream B)</td>
+                <td>Trimester 1</td>
+                <td>
+                  <div class="progress-bar-container light-mode">
+                    <div class="progress-bar" style="width: 50%;"></div>
+                  </div>
+                </td>
+                <td><button class="action-btn" onclick="continueCourse('COMP514')"><i class="fas fa-play"></i> Continue</button></td>
+              </tr>
+              <tr>
+                <td class="duration" colspan="4">Feb-May</td>
+              </tr>
+              <tr>
+                <td>COMP517: Hardware and Software Service Provisioning</td>
+                <td>Trimester 2</td>
+                <td>
+                  <div class="progress-bar-container light-mode">
+                    <div class="progress-bar" style="width: 20%;"></div>
+                  </div>
+                </td>
+                <td><button class="action-btn" onclick="enrollCourse('COMP517')"><i class="fas fa-plus"></i> Enroll</button></td>
+              </tr>
+              <tr>
+                <td class="duration" colspan="4">Sep-Dec</td>
+              </tr>
+              <tr>
+                <td>COMP518: Information Systems Maintenance and Service Management</td>
+                <td>Trimester 2</td>
+                <td>
+                  <div class="progress-bar-container light-mode">
+                    <div class="progress-bar" style="width: 90%;"></div>
+                  </div>
+                </td>
+                <td><button class="action-btn" onclick="continueCourse('COMP518')"><i class="fas fa-play"></i> Continue</button></td>
+              </tr>
+              <tr>
+                <td class="duration" colspan="4">Sep-Dec</td>
+              </tr>
+            </tbody>
+          </table>
+          <a href="#" class="view-all">View All</a>
+        </div>
+      </div>
+      <div class="calendar-section" id="Calendar-content" style="display: none;">
+        <h2>Calendar</h2>
+        <div class="calendar-header">
+          <span id="calendar-month">March 2025</span>
+          <div class="nav-buttons">
+            <button onclick="prevMonth()">Prev</button>
+            <button onclick="nextMonth()">Next</button>
+          </div>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+      <div class="grades-section" id="grades-content" style="display: none;">
+        <h2>Grades</h2>
+        <div class="grades-table light-mode">
+          <table>
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Assignment Marks</th>
+                <th>Exam Marks</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>COMP510: Fundamentals of Information Systems and Technology</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+              </tr>
+              <tr>
+                <td>COMP511: Introduction to Programming</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+              </tr>
+              <tr>
+                <td>COMP514: Fundamentals of Computer Databases</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+                <td class="pending">Pending</td>
+              </tr>
+              <tr>
+                <td>COMP517: Hardware and Software Service Provisioning</td>
+                <td>85</td>
+                <td>78</td>
+                <td>A-</td>
+              </tr>
+              <tr>
+                <td>COMP518: Information Systems Maintenance and Service Management</td>
+                <td>92</td>
+                <td>88</td>
+                <td>A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="chats-section" id="chats-content" style="display: none;">
+        <h2>Chats</h2>
+        <p>Chats content will be added here.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentDate = new Date();
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let currentPage = 'dashboard'; // Track current page
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById("calendar-grid");
+      const calendarMonth = document.getElementById("calendar-month");
+      calendarGrid.innerHTML = "";
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      calendarMonth.textContent = `${months[month]} ${year}`;
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const totalDays = lastDay.getDate();
+      const startDay = firstDay.getDay();
+
+      days.forEach(day => {
+        const dayElement = document.createElement("div");
+        dayElement.classList.add("calendar-day", "header");
+        dayElement.textContent = day;
+        calendarGrid.appendChild(dayElement);
+      });
+
+      for (let i = 0; i < startDay; i++) {
+        const emptyDay = document.createElement("div");
+        emptyDay.classList.add("calendar-day");
+        calendarGrid.appendChild(emptyDay);
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const dayElement = document.createElement("div");
+        dayElement.classList.add("calendar-day");
+        dayElement.textContent = day;
+
+        const current = new Date(year, month, day);
+        if (current.toDateString() === new Date().toDateString()) {
+          dayElement.classList.add("today");
+        }
+
+        if (current.getDay() >= 1 && current.getDay() <= 5) {
+          dayElement.classList.add("college-day");
+        }
+
+        calendarGrid.appendChild(dayElement);
+      }
+    }
+
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    function navigate(page) {
+      const sections = {
+        'dashboard': document.getElementById('dashboard-content'),
+        'courses': document.getElementById('courses-content'),
+        'chats': document.getElementById('chats-content'),
+        'grades': document.getElementById('grades-content'),
+        'Calendar': document.getElementById('Calendar-content')
+      };
+      const sidebarItems = document.querySelectorAll('.sidebar ul li');
+
+      sidebarItems.forEach(item => item.classList.remove('active'));
+      document.querySelector(`.sidebar ul li[onclick="navigate('${page}')"]`).classList.add('active');
+
+      Object.values(sections).forEach(section => section.style.display = 'none');
+      sections[page].style.display = 'block';
+
+      // Update navbar title based on page
+      currentPage = page;
+      updateNavTitle();
+
+      if (page === 'Calendar') {
+        renderCalendar();
+      }
+    }
+
+    function updateNavTitle() {
+      const navTitle = document.getElementById('nav-title');
+      navTitle.textContent = currentPage.charAt(0).toUpperCase() + currentPage.slice(1); // Capitalize first letter
+    }
+
+    function handleLogin() {
+      const loginSection = document.getElementById("login-section");
+      const mainWrapper = document.getElementById("main-wrapper");
+
+      loginSection.style.display = "none";
+      mainWrapper.style.display = "flex";
+      navigate('dashboard');
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && document.getElementById("login-section").style.display !== "none") {
+        handleLogin();
+      }
+    });
+
+    function handleLogout() {
+      const loginSection = document.getElementById("login-section");
+      const mainWrapper = document.getElementById("main-wrapper");
+
+      loginSection.style.display = "block";
+      mainWrapper.style.display = "none";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+    }
+
+    function enrollCourse(courseId) {
+      alert(`Enrolled in ${courseId}!`);
+    }
+
+    function continueCourse(courseId) {
+      alert(`Continuing ${courseId}!`);
+    }
+
+    function applyForLeave() {
+      alert("Leave application submitted! Please contact admin for approval.");
+    }
+
+    // Update Progress Bars for Theme Toggle
+    function updateProgressBars() {
+      const progressBars = document.querySelectorAll(".progress-bar-container");
+      progressBars.forEach(bar => {
+        bar.classList.toggle("light-mode");
+        bar.classList.toggle("dark-mode");
+      });
+    }
+
+    // Theme Toggle
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      document.body.classList.toggle("dark-mode");
+
+      const sidebar = document.querySelector(".sidebar");
+      const contentWrapper = document.querySelector(".content-wrapper");
+      const topNav = document.querySelector(".top-nav");
+      const courseCards = document.querySelectorAll(".course-card");
+      const eventCards = document.querySelectorAll(".event-card");
+      const calendarSection = document.querySelector(".calendar-section");
+      const attendanceSection = document.querySelector(".attendance-section");
+      const courseList = document.querySelector(".course-list");
+      const gradesTable = document.querySelector(".grades-table");
+
+      sidebar.classList.toggle("light-mode");
+      sidebar.classList.toggle("dark-mode");
+      contentWrapper.classList.toggle("light-mode");
+      contentWrapper.classList.toggle("dark-mode");
+      topNav.classList.toggle("light-mode");
+      topNav.classList.toggle("dark-mode");
+      courseCards.forEach(card => {
+        card.classList.toggle("light-mode");
+        card.classList.toggle("dark-mode");
+      });
+      eventCards.forEach(card => {
+        card.classList.toggle("light-mode");
+        card.classList.toggle("dark-mode");
+      });
+      calendarSection.classList.toggle("light-mode");
+      calendarSection.classList.toggle("dark-mode");
+      attendanceSection.classList.toggle("light-mode");
+      attendanceSection.classList.toggle("dark-mode");
+      courseList.classList.toggle("light-mode");
+      courseList.classList.toggle("dark-mode");
+      gradesTable.classList.toggle("light-mode");
+      gradesTable.classList.toggle("dark-mode");
+
+      // Update progress bars
+      updateProgressBars();
+
+      themeToggle.classList.toggle("fas fa-sun");
+      themeToggle.classList.toggle("fas fa-moon");
+    });
+
+    window.addEventListener("load", () => {
+      renderCalendar();
+      document.getElementById("login-section").style.display = "block";
+    });
+  </script>
+</body>
+</html>
